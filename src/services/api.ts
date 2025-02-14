@@ -18,7 +18,6 @@ interface AFADEarthquake {
   lastUpdateDate: string | null;
 }
 
-// Relative URL kullanarak Vercel'de sorunsuz çalışacak
 const api = axios.create({
   baseURL: '/api',
 });
@@ -26,13 +25,13 @@ const api = axios.create({
 export const getEarthquakes = async (source: string = 'all'): Promise<Earthquake[]> => {
   try {
     const response = await api.get<Earthquake[]>('/earthquakes', {
-      params: { source }
+      params: { 
+        source,
+        orderby: 'timedesc'
+      }
     });
 
-    // Tarihe göre sırala
-    return response.data.sort((a, b) => 
-      new Date(b.date).getTime() - new Date(a.date).getTime()
-    );
+    return response.data;
   } catch (error) {
     console.error('Error fetching earthquakes:', error);
     return [];
