@@ -4,12 +4,13 @@ import { useQuery } from "@tanstack/react-query"
 import { getEarthquakes } from "@/services/api"
 import dynamic from "next/dynamic"
 import "leaflet/dist/leaflet.css"
-import { useState } from "react"
+import { useState, useEffect, useRef } from "react"
 import type { Icon as LeafletIcon, Map as LeafletMap } from "leaflet"
 import { format } from "date-fns"
 import { tr } from "date-fns/locale"
 import { SourceSelector } from "./source-selector"
 import { useSearchParams } from "next/navigation"
+import { Marker as LeafletMarker } from "leaflet"
 
 // Leaflet bileşenlerini client-side'da yükle
 const MapContainer = dynamic(
@@ -29,18 +30,32 @@ const Popup = dynamic(
   { ssr: false }
 )
 
-// Marker icon'u client-side'da oluştur
-let markerIcon: LeafletIcon
+// Farklı büyüklükler için marker ikonları
+let markerIcons: Record<string, LeafletIcon>
 if (typeof window !== "undefined") {
   const L = require("leaflet")
-  markerIcon = new L.Icon({
-    iconUrl: "/images/marker-icon.png",
-    shadowUrl: "/images/marker-shadow.png",
-    iconSize: [25, 41],
-    iconAnchor: [12, 41],
-    popupAnchor: [1, -34],
-    shadowSize: [41, 41]
-  })
+  markerIcons = {
+    small: new L.Icon({
+      iconUrl: '/images/marker-shadow.png',
+      iconSize: [24, 24],
+      iconAnchor: [12, 24],
+      popupAnchor: [0, -24],
+      shadowUrl: null
+    }),
+    large: new L.Icon({
+      iconUrl: '/images/marker-icon.png',
+      iconSize: [24, 24],
+      iconAnchor: [12, 24],
+      popupAnchor: [0, -24],
+      shadowUrl: null
+    })
+  }
+}
+
+// Büyüklüğe göre ikon seçimi fonksiyonu
+const getMarkerIcon = (magnitude: number) => {
+  if (magnitude >= 4.0) return markerIcons.large
+  return markerIcons.small
 }
 
 // Büyüklük kategorileri için renkler
@@ -71,6 +86,28 @@ export function EarthquakeMap() {
     queryFn: () => getEarthquakes(selectedSource),
     refetchInterval: 5 * 60 * 1000,
   })
+
+  // Marker referanslarını tutmak için bir Map oluştur
+  const markerRefs = useRef<Map<string, LeafletMarker>>(new Map())
+  const mapRef = useRef<LeafletMap | null>(null)
+  
+  // selectedId değiştiğinde popup'ı aç
+  useEffect(() => {
+    if (selectedId && earthquakes && mapRef.current) {
+      const selectedEarthquake = earthquakes.find(eq => eq.id === selectedId)
+      if (selectedEarthquake) {
+        const marker = markerRefs.current.get(selectedId)
+        if (marker) {
+          // Haritayı deprem konumuna merkezle ve popup'ı aç
+          mapRef.current.setView(
+            [selectedEarthquake.latitude, selectedEarthquake.longitude],
+            8
+          )
+          marker.openPopup()
+        }
+      }
+    }
+  }, [selectedId, earthquakes])
 
   const renderLegend = () => (
     <div className="flex items-center gap-4">
@@ -117,6 +154,7 @@ export function EarthquakeMap() {
           center={center}
           zoom={zoom ? parseInt(zoom) : defaultZoom}
           className="h-full w-full"
+          ref={mapRef}
         >
           <TileLayer
             url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
@@ -129,7 +167,12 @@ export function EarthquakeMap() {
               <Marker
                 key={uniqueKey}
                 position={[earthquake.latitude, earthquake.longitude]}
-                icon={markerIcon}
+                icon={getMarkerIcon(earthquake.magnitude)}
+                ref={(ref: any) => {
+                  if (ref && ref.leafletElement) {
+                    markerRefs.current.set(earthquake.id, ref.leafletElement)
+                  }
+                }}
               >
                 <Popup>
                   <div className="p-2">
