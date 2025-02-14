@@ -86,53 +86,31 @@ async function scrapeKandilliData(): Promise<KandilliEarthquake[]> {
 async function getAfadData(): Promise<AfadEarthquake[]> {
   try {
     const response = await fetch(
-      'https://servisnet.afad.gov.tr/apigateway/deprem/apiv2/event/filter?start=2025-01-01%2000:00:00&end=2025-02-14%2023:59:59&orderby=timedesc',
+      'https://servisnet.afad.gov.tr/apigateway/deprem/apiv2/event/filter?orderby=timedesc&minmag=0&limit=500',
       {
         method: 'GET',
         headers: {
           'Accept': 'application/json',
           'Content-Type': 'application/json',
-          'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36'
         },
         cache: 'no-store',
         next: { revalidate: 0 }
       }
     );
 
-    if (!response.ok) {
-      console.error('AFAD API response error:', {
-        status: response.status,
-        statusText: response.statusText,
-        url: response.url
-      });
-      return [];
-    }
-
     const data = await response.json();
-
-    if (!Array.isArray(data)) {
-      console.error('AFAD data is not an array:', data);
-      return [];
-    }
-
-    return data.map((item: any): AfadEarthquake => {
-      // Tarihi UTC+3'e çevir
-      const utcDate = new Date(item.date);
-      const trDate = new Date(utcDate.getTime() + (3 * 60 * 60 * 1000)); // 3 saat ekle
-
-      return {
-        eventID: item.eventID || String(item.id),
-        date: trDate.toISOString(), // UTC+3 olarak ayarlanmış tarih
-        magnitude: Number(item.magnitude),
-        depth: Number(item.depth),
-        latitude: Number(item.latitude),
-        longitude: Number(item.longitude),
-        location: item.location,
-        province: item.province,
-        district: item.district,
-        neighborhood: item.neighborhood || undefined
-      };
-    });
+    return data.map((item: any): AfadEarthquake => ({
+      eventID: item.eventID || String(item.id),
+      date: item.date,  // Tarihi olduğu gibi bırak, UTC+3 dönüşümü yapma
+      magnitude: Number(item.magnitude),
+      depth: Number(item.depth),
+      latitude: Number(item.latitude),
+      longitude: Number(item.longitude),
+      location: item.location,
+      province: item.province,
+      district: item.district,
+      neighborhood: item.neighborhood || undefined
+    }));
   } catch (error) {
     console.error('AFAD error:', error);
     return [];
