@@ -7,6 +7,7 @@ import "leaflet/dist/leaflet.css"
 import { useState, useEffect, useRef } from "react"
 import type { Icon as LeafletIcon, Map as LeafletMap } from "leaflet"
 import { format } from "date-fns"
+import { formatInTimeZone } from "date-fns-tz"
 import { tr } from "date-fns/locale"
 import { SourceSelector } from "./source-selector"
 import { useSearchParams } from "next/navigation"
@@ -178,9 +179,12 @@ export function EarthquakeMap() {
                   <div className="p-2">
                     <h3 className="font-semibold">{earthquake.location}</h3>
                     <p className="text-sm text-muted-foreground">
-                      {format(new Date(earthquake.date), "d MMMM yyyy HH:mm", {
-                        locale: tr,
-                      })}
+                      {formatInTimeZone(
+                        new Date(earthquake.date),
+                        'Europe/Istanbul',
+                        "d MMMM yyyy HH:mm",
+                        { locale: tr }
+                      )}
                     </p>
                     <div className="mt-2">
                       <p className="text-sm">
