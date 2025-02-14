@@ -82,13 +82,15 @@ export function EarthquakeMap() {
     ? [parseFloat(lat), parseFloat(lng)]
     : defaultCenter
 
-  const { data: earthquakes, isLoading } = useQuery({
+  const { data: allEarthquakes, isLoading } = useQuery({
     queryKey: ["earthquakes", selectedSource],
     queryFn: () => getEarthquakes(selectedSource),
     refetchInterval: 5 * 60 * 1000,
   })
 
-  // Marker referanslarını tutmak için bir Map oluştur
+  // Son 50 depremi al
+  const earthquakes = allEarthquakes?.slice(0, 50)
+
   const markerRefs = useRef<Map<string, LeafletMarker>>(new Map())
   const mapRef = useRef<LeafletMap | null>(null)
   
@@ -212,4 +214,4 @@ export function EarthquakeMap() {
       </div>
     </div>
   )
-} 
+}
