@@ -35,11 +35,6 @@ const buttonVariants = cva(
   }
 )
 
-const MotionButton = motion(React.forwardRef<
-  HTMLButtonElement,
-  React.ButtonHTMLAttributes<HTMLButtonElement>
->((props, ref) => <button ref={ref} {...props} />))
-
 export interface ButtonProps
   extends React.ButtonHTMLAttributes<HTMLButtonElement>,
     VariantProps<typeof buttonVariants> {
@@ -48,9 +43,21 @@ export interface ButtonProps
 
 const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
   ({ className, variant, size, asChild = false, ...props }, ref) => {
-    const Comp = asChild ? Slot : MotionButton
+    const MotionButton = motion.button
+    const Comp = asChild ? Slot : "button"
+    
+    if (asChild) {
+      return (
+        <Comp
+          className={cn(buttonVariants({ variant, size, className }))}
+          ref={ref}
+          {...props}
+        />
+      )
+    }
+
     return (
-      <Comp
+      <MotionButton
         className={cn(buttonVariants({ variant, size, className }))}
         ref={ref}
         whileTap={{ scale: 0.95 }}
