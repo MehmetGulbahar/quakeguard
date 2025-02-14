@@ -69,10 +69,10 @@ export function EarthquakeMap() {
   const [selectedSource, setSelectedSource] = useState('all')
   const searchParams = useSearchParams()
   
-  const lat = searchParams.get('lat')
-  const lng = searchParams.get('lng')
-  const zoom = searchParams.get('zoom')
-  const selectedId = searchParams.get('id')
+  const lat = searchParams?.get('lat')
+  const lng = searchParams?.get('lng')
+  const zoom = searchParams?.get('zoom')
+  const selectedId = searchParams?.get('id')
 
   const defaultCenter: [number, number] = [39.0, 35.0]
   const defaultZoom = 6
