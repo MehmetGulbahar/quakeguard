@@ -49,7 +49,7 @@ async function scrapeKandilliData(): Promise<KandilliEarthquake[]> {
 
     const $ = cheerio.load(html);
     const preText = $('pre').text();
-    const lines = preText.split('\n').slice(6); // İlk 6 satırı atla
+    const lines = preText.split('\n').slice(6); 
 
     const earthquakes: KandilliEarthquake[] = [];
 
@@ -143,7 +143,7 @@ export async function GET(request: NextRequest) {
 
       const formattedKandilliData = kandilliData.map((eq): Earthquake => ({
         id: `kandilli-${eq.date}-${eq.time}`,
-        date: new Date(`${eq.date} ${eq.time}`),
+        date: new Date(`${eq.date} ${eq.time} GMT+0300`),
         magnitude: parseFloat(eq.ml) || parseFloat(eq.mw) || parseFloat(eq.md) || 0,
         depth: parseFloat(eq.depth),
         latitude: parseFloat(eq.latitude),
@@ -179,7 +179,7 @@ export async function GET(request: NextRequest) {
       const kandilliData = await scrapeKandilliData();
       earthquakes = kandilliData.map((eq): Earthquake => ({
         id: `kandilli-${eq.date}-${eq.time}`,
-        date: new Date(`${eq.date} ${eq.time}`),
+        date: new Date(`${eq.date} ${eq.time} GMT+0300`),
         magnitude: parseFloat(eq.ml) || parseFloat(eq.mw) || parseFloat(eq.md) || 0,
         depth: parseFloat(eq.depth),
         latitude: parseFloat(eq.latitude),
