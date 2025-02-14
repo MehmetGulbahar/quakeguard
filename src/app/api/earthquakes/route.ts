@@ -86,7 +86,7 @@ async function scrapeKandilliData(): Promise<KandilliEarthquake[]> {
 async function getAfadData(): Promise<AfadEarthquake[]> {
   try {
     const response = await fetch(
-      'https://servisnet.afad.gov.tr/apigateway/deprem/apiv2/event/filter?orderby=timedesc&minmag=0&limit=500',
+      'https://servisnet.afad.gov.tr/apigateway/deprem/apiv2/event/filter?start=2025-01-01%2000:00:00&end=2025-02-14%2023:59:59&orderby=timedesc',
       {
         method: 'GET',
         headers: {
@@ -99,9 +99,15 @@ async function getAfadData(): Promise<AfadEarthquake[]> {
     );
 
     const data = await response.json();
+    
+    if (!Array.isArray(data)) {
+      console.error('AFAD data is not an array:', data);
+      return [];
+    }
+
     return data.map((item: any): AfadEarthquake => ({
       eventID: item.eventID || String(item.id),
-      date: item.date,  // Tarihi olduğu gibi bırak, UTC+3 dönüşümü yapma
+      date: item.date,
       magnitude: Number(item.magnitude),
       depth: Number(item.depth),
       latitude: Number(item.latitude),
@@ -111,6 +117,7 @@ async function getAfadData(): Promise<AfadEarthquake[]> {
       district: item.district,
       neighborhood: item.neighborhood || undefined
     }));
+
   } catch (error) {
     console.error('AFAD error:', error);
     return [];
