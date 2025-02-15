@@ -86,7 +86,7 @@ async function scrapeKandilliData(): Promise<KandilliEarthquake[]> {
 async function getAfadData(): Promise<AfadEarthquake[]> {
   try {
     const response = await fetch(
-      'https://servisnet.afad.gov.tr/apigateway/deprem/apiv2/event/filter?start=2025-01-01%2000:00:00&end=2025-02-14%2023:59:59&orderby=timedesc',
+      'https://servisnet.afad.gov.tr/apigateway/deprem/apiv2/event/filter?start=2025-01-01%2000:00:00&end=2025-02-15%2023:59:59&orderby=timedesc',
       {
         method: 'GET',
         headers: {
