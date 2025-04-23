@@ -42,7 +42,7 @@ function turkishCharFix(text: string): string {
 
 async function scrapeKandilliData(): Promise<KandilliEarthquake[]> {
   try {
-    const response = await fetch('http://www.koeri.boun.edu.tr/scripts/lst8.asp');
+    const response = await fetch('http://www.koeri.boun.edu.tr/scripts/lst6.asp');
     const buffer = await response.arrayBuffer();
     const decoder = new TextDecoder('latin1');
     const html = decoder.decode(buffer);
