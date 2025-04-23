@@ -122,16 +122,17 @@ async function scrapeKandilliData(): Promise<KandilliEarthquake[]> {
 
 async function getAfadData(): Promise<AfadEarthquake[]> {
   try {
-    // Son 30 günlük deprem verilerini almak için tarih hesaplama
     const endDate = new Date();
     const startDate = new Date();
-    startDate.setDate(startDate.getDate() - 30);
+    startDate.setDate(startDate.getDate() - 7);
     
-    // ISO formatına çevirme ve URL kodlaması
     const startDateStr = startDate.toISOString().slice(0, 19).replace('T', ' ');
     const endDateStr = endDate.toISOString().slice(0, 19).replace('T', ' ');
     const startEncoded = encodeURIComponent(startDateStr);
     const endEncoded = encodeURIComponent(endDateStr);
+    
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 8000);
     
     const response = await fetch(
       `https://servisnet.afad.gov.tr/apigateway/deprem/apiv2/event/filter?start=${startEncoded}&end=${endEncoded}&orderby=timedesc`,
@@ -140,11 +141,20 @@ async function getAfadData(): Promise<AfadEarthquake[]> {
         headers: {
           'Accept': 'application/json',
           'Content-Type': 'application/json',
+          'Origin': 'https://quakeguard.vercel.app',
         },
         cache: 'no-store',
-        next: { revalidate: 0 }
+        next: { revalidate: 0 },
+        signal: controller.signal
       }
     );
+    
+    clearTimeout(timeoutId);
+    
+    if (!response.ok) {
+      console.error(`AFAD API returned status ${response.status}`);
+      return [];
+    }
 
     const data = await response.json();
     
@@ -213,11 +223,30 @@ export async function GET(request: NextRequest) {
     if (source === 'all') {
       console.log('Fetching data from all sources...');
       
-      const [kandilliData, afadData, usgsData] = await Promise.all([
-        scrapeKandilliData(),
-        getAfadData(),
-        getUSGSData()
-      ]);
+      let kandilliData: KandilliEarthquake[] = [];
+      let afadData: AfadEarthquake[] = [];
+      let usgsData: USGSFeature[] = [];
+      
+      try {
+        kandilliData = await scrapeKandilliData();
+        console.log(`Kandilli data fetched: ${kandilliData.length} records`);
+      } catch (error) {
+        console.error('Failed to fetch Kandilli data:', error);
+      }
+      
+      try {
+        usgsData = await getUSGSData();
+        console.log(`USGS data fetched: ${usgsData.length} records`);
+      } catch (error) {
+        console.error('Failed to fetch USGS data:', error);
+      }
+      
+      try {
+        afadData = await getAfadData();
+        console.log(`AFAD data fetched: ${afadData.length} records`);
+      } catch (error) {
+        console.error('Failed to fetch AFAD data:', error);
+      }
 
       const formattedKandilliData = kandilliData.map((eq): Earthquake => ({
         id: `kandilli-${eq.date}-${eq.time}`,
