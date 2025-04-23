@@ -22,6 +22,12 @@ export function SourceSelector({ selectedSource, onSourceChange }: SourceSelecto
       >
         AFAD
       </Button>
+      <Button
+        variant={selectedSource === 'usgs' ? 'default' : 'outline'}
+        onClick={() => onSourceChange('usgs')}
+      >
+        USGS
+      </Button>
     </div>
   )
-} 
+}

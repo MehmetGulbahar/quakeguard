@@ -29,6 +29,43 @@ interface AfadEarthquake {
   neighborhood?: string;
 }
 
+interface USGSFeature {
+  type: string;
+  properties: {
+    mag: number;
+    place: string;
+    time: number;
+    updated: number;
+    url: string;
+    detail: string;
+    status: string;
+    tsunami: number;
+    magType: string;
+    type: string;
+    title: string;
+  };
+  geometry: {
+    type: string;
+    coordinates: [number, number, number];
+  };
+  id: string;
+}
+
+interface USGSResponse {
+  type: string;
+  metadata: {
+    generated: number;
+    url: string;
+    title: string;
+    status: number;
+    api: string;
+    limit: number;
+    offset: number;
+    count: number;
+  };
+  features: USGSFeature[];
+}
+
 function turkishCharFix(text: string): string {
   return text
     .replace(/Ý/g, 'İ')
@@ -124,6 +161,36 @@ async function getAfadData(): Promise<AfadEarthquake[]> {
   }
 }
 
+async function getUSGSData(): Promise<USGSFeature[]> {
+  try {
+    const response = await fetch(
+      'https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&orderby=time&limit=20',
+      {
+        method: 'GET',
+        headers: {
+          'Accept': 'application/json',
+          'Content-Type': 'application/json',
+        },
+        cache: 'no-store',
+        next: { revalidate: 0 }
+      }
+    );
+
+    const data: USGSResponse = await response.json();
+    
+    if (!data.features || !Array.isArray(data.features)) {
+      console.error('USGS data is not in expected format:', data);
+      return [];
+    }
+
+    return data.features;
+
+  } catch (error) {
+    console.error('USGS API error:', error);
+    return [];
+  }
+}
+
 export const dynamic = 'force-dynamic';
 
 export async function GET(request: NextRequest) {
@@ -133,13 +200,13 @@ export async function GET(request: NextRequest) {
     let earthquakes: Earthquake[] = [];
 
     if (source === 'all') {
-      console.log('Fetching data from both sources...');
+      console.log('Fetching data from all sources...');
       
-      const [kandilliData, afadData] = await Promise.all([
+      const [kandilliData, afadData, usgsData] = await Promise.all([
         scrapeKandilliData(),
-        getAfadData()
+        getAfadData(),
+        getUSGSData()
       ]);
-
 
       const formattedKandilliData = kandilliData.map((eq): Earthquake => ({
         id: `kandilli-${eq.date}-${eq.time}`,
@@ -168,11 +235,22 @@ export async function GET(request: NextRequest) {
         district: eq.district,
         neighborhood: eq.neighborhood
       }));
-
-
-      earthquakes = [...formattedKandilliData, ...formattedAfadData];
       
+      const formattedUSGSData = usgsData.map((feature): Earthquake => ({
+        id: feature.id,
+        date: new Date(feature.properties.time),
+        magnitude: feature.properties.mag,
+        depth: feature.geometry.coordinates[2], // USGS format: [longitude, latitude, depth]
+        latitude: feature.geometry.coordinates[1],
+        longitude: feature.geometry.coordinates[0],
+        location: feature.properties.place,
+        source: 'USGS',
+        province: feature.properties.place.split(' of ')[1] || '',
+        district: '',
+      }));
 
+      earthquakes = [...formattedKandilliData, ...formattedAfadData, ...formattedUSGSData];
+      
       // Tarihe göre sırala
       earthquakes.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
     } else if (source === 'kandilli') {
@@ -205,6 +283,20 @@ export async function GET(request: NextRequest) {
         district: eq.district,
         neighborhood: eq.neighborhood
       }));
+    } else if (source === 'usgs') {
+      const usgsData = await getUSGSData();
+      earthquakes = usgsData.map((feature): Earthquake => ({
+        id: feature.id,
+        date: new Date(feature.properties.time),
+        magnitude: feature.properties.mag,
+        depth: feature.geometry.coordinates[2],
+        latitude: feature.geometry.coordinates[1],
+        longitude: feature.geometry.coordinates[0],
+        location: feature.properties.place,
+        source: 'USGS',
+        province: feature.properties.place.split(' of ')[1] || '',
+        district: '',
+      }));
     }
 
     return NextResponse.json(earthquakes);
@@ -215,4 +307,4 @@ export async function GET(request: NextRequest) {
       { status: 500 }
     );
   }
-} 
+}
