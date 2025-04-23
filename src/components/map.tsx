@@ -6,7 +6,6 @@ import 'leaflet/dist/leaflet.css'
 import { Earthquake } from "@/types/earthquake"
 import L from 'leaflet'
 
-// Leaflet'in varsayılan ikon ayarlarını geçersiz kıl
 L.Icon.Default.imagePath = ''
 L.Icon.Default.mergeOptions({
   iconRetinaUrl: '/icons/shadowmarker.png',

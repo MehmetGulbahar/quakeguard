@@ -53,13 +53,11 @@ if (typeof window !== "undefined") {
   }
 }
 
-// Büyüklüğe göre ikon seçimi fonksiyonu
 const getMarkerIcon = (magnitude: number) => {
   if (magnitude >= 4.0) return markerIcons.large
   return markerIcons.small
 }
 
-// Büyüklük kategorileri için renkler
 const getMagnitudeColor = (magnitude: number) => {
   if (magnitude >= 4) return "destructive"
   if (magnitude >= 3) return "warning"
@@ -88,20 +86,17 @@ export function EarthquakeMap() {
     refetchInterval: 5 * 60 * 1000,
   })
 
-  // Son 50 depremi al
   const earthquakes = allEarthquakes?.slice(0, 50)
 
   const markerRefs = useRef<Map<string, LeafletMarker>>(new Map())
   const mapRef = useRef<LeafletMap | null>(null)
   
-  // selectedId değiştiğinde popup'ı aç
   useEffect(() => {
     if (selectedId && earthquakes && mapRef.current) {
       const selectedEarthquake = earthquakes.find(eq => eq.id === selectedId)
       if (selectedEarthquake) {
         const marker = markerRefs.current.get(selectedId)
         if (marker) {
-          // Haritayı deprem konumuna merkezle ve popup'ı aç
           mapRef.current.setView(
             [selectedEarthquake.latitude, selectedEarthquake.longitude],
             8

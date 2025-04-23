@@ -240,7 +240,7 @@ export async function GET(request: NextRequest) {
         id: feature.id,
         date: new Date(feature.properties.time),
         magnitude: feature.properties.mag,
-        depth: feature.geometry.coordinates[2], // USGS format: [longitude, latitude, depth]
+        depth: feature.geometry.coordinates[2], 
         latitude: feature.geometry.coordinates[1],
         longitude: feature.geometry.coordinates[0],
         location: feature.properties.place,
@@ -251,7 +251,6 @@ export async function GET(request: NextRequest) {
 
       earthquakes = [...formattedKandilliData, ...formattedAfadData, ...formattedUSGSData];
       
-      // Tarihe göre sırala
       earthquakes.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
     } else if (source === 'kandilli') {
       const kandilliData = await scrapeKandilliData();

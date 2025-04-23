@@ -6,9 +6,9 @@ export interface Earthquake {
   latitude: number;
   longitude: number;
   location: string;
-  source: 'Kandilli' | 'AFAD';
+  source: 'Kandilli' | 'AFAD' | 'USGS';
   province: string;
   district: string;
   neighborhood?: string;
   quality?: string;
-} 
+}
