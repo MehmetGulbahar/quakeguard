@@ -3,6 +3,7 @@ import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
 import { Navbar } from "@/components/navbar";
+import { Footer } from "@/components/footer";
 import { QueryProvider } from "@/components/providers/query-provider";
 import "leaflet/dist/leaflet.css"
 import { PageTransition } from "@/components/page-transition"
@@ -47,10 +48,15 @@ export default function RootLayout({
           disableTransitionOnChange
         >
           <QueryProvider>
-            <Navbar />
-            <PageTransition>
-              {children}
-            </PageTransition>
+            <div className="flex flex-col min-h-screen">
+              <Navbar />
+              <main className="flex-grow">
+                <PageTransition>
+                  {children}
+                </PageTransition>
+              </main>
+              <Footer />
+            </div>
           </QueryProvider>
         </ThemeProvider>
       </body>

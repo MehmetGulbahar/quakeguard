@@ -122,8 +122,19 @@ async function scrapeKandilliData(): Promise<KandilliEarthquake[]> {
 
 async function getAfadData(): Promise<AfadEarthquake[]> {
   try {
+    // Son 30 günlük deprem verilerini almak için tarih hesaplama
+    const endDate = new Date();
+    const startDate = new Date();
+    startDate.setDate(startDate.getDate() - 30);
+    
+    // ISO formatına çevirme ve URL kodlaması
+    const startDateStr = startDate.toISOString().slice(0, 19).replace('T', ' ');
+    const endDateStr = endDate.toISOString().slice(0, 19).replace('T', ' ');
+    const startEncoded = encodeURIComponent(startDateStr);
+    const endEncoded = encodeURIComponent(endDateStr);
+    
     const response = await fetch(
-      'https://servisnet.afad.gov.tr/apigateway/deprem/apiv2/event/filter?start=2025-01-01%2000:00:00&end=2025-12-20%2023:59:59&orderby=timedesc',
+      `https://servisnet.afad.gov.tr/apigateway/deprem/apiv2/event/filter?start=${startEncoded}&end=${endEncoded}&orderby=timedesc`,
       {
         method: 'GET',
         headers: {
