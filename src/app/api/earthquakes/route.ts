@@ -66,6 +66,17 @@ interface USGSResponse {
   features: USGSFeature[];
 }
 
+interface GeofonEarthquake {
+  eventId: string;
+  time: string;
+  latitude: string;
+  longitude: string;
+  depth: string;
+  magType: string;
+  magnitude: string;
+  location: string;
+}
+
 function turkishCharFix(text: string): string {
   return text
     .replace(/Ý/g, 'İ')
@@ -212,6 +223,56 @@ async function getUSGSData(): Promise<USGSFeature[]> {
   }
 }
 
+async function getGeofonData(): Promise<GeofonEarthquake[]> {
+  try {
+    const response = await fetch(
+      'https://geofon.gfz.de/fdsnws/event/1/query?format=text&limit=15&orderby=time',
+      {
+        method: 'GET',
+        headers: {
+          'Accept': 'text/plain',
+        },
+        cache: 'no-store',
+        next: { revalidate: 0 }
+      }
+    );
+
+    if (!response.ok) {
+      console.error(`GEOFON API returned status ${response.status}`);
+      return [];
+    }
+
+    const text = await response.text();
+    const lines = text.split('\n');
+    
+    // İlk satır header, onu atlayalım
+    const dataLines = lines.filter(line => line.trim() && !line.startsWith('#'));
+    
+    const earthquakes: GeofonEarthquake[] = [];
+    
+    for (const line of dataLines) {
+      const parts = line.split('|');
+      if (parts.length >= 14) {
+        earthquakes.push({
+          eventId: parts[0],
+          time: parts[1],
+          latitude: parts[2],
+          longitude: parts[3],
+          depth: parts[4],
+          magType: parts[9],
+          magnitude: parts[10],
+          location: parts[12]
+        });
+      }
+    }
+    
+    return earthquakes;
+  } catch (error) {
+    console.error('GEOFON API error:', error);
+    return [];
+  }
+}
+
 export const dynamic = 'force-dynamic';
 
 export async function GET(request: NextRequest) {
@@ -226,6 +287,7 @@ export async function GET(request: NextRequest) {
       let kandilliData: KandilliEarthquake[] = [];
       let afadData: AfadEarthquake[] = [];
       let usgsData: USGSFeature[] = [];
+      let geofonData: GeofonEarthquake[] = [];
       
       try {
         kandilliData = await scrapeKandilliData();
@@ -246,6 +308,13 @@ export async function GET(request: NextRequest) {
         console.log(`AFAD data fetched: ${afadData.length} records`);
       } catch (error) {
         console.error('Failed to fetch AFAD data:', error);
+      }
+
+      try {
+        geofonData = await getGeofonData();
+        console.log(`GEOFON data fetched: ${geofonData.length} records`);
+      } catch (error) {
+        console.error('Failed to fetch GEOFON data:', error);
       }
 
       const formattedKandilliData = kandilliData.map((eq): Earthquake => ({
@@ -289,7 +358,20 @@ export async function GET(request: NextRequest) {
         district: '',
       }));
 
-      earthquakes = [...formattedKandilliData, ...formattedAfadData, ...formattedUSGSData];
+      const formattedGeofonData = geofonData.map((eq): Earthquake => ({
+        id: eq.eventId,
+        date: new Date(eq.time),
+        magnitude: parseFloat(eq.magnitude),
+        depth: parseFloat(eq.depth),
+        latitude: parseFloat(eq.latitude),
+        longitude: parseFloat(eq.longitude),
+        location: eq.location,
+        source: 'GEOFON',
+        province: eq.location.split('-')[0]?.trim() || '',
+        district: eq.location.split('-')[1]?.trim() || '',
+      }));
+
+      earthquakes = [...formattedKandilliData, ...formattedAfadData, ...formattedUSGSData, ...formattedGeofonData];
       
       earthquakes.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
     } else if (source === 'kandilli') {
@@ -335,6 +417,20 @@ export async function GET(request: NextRequest) {
         source: 'USGS',
         province: feature.properties.place.split(' of ')[1] || '',
         district: '',
+      }));
+    } else if (source === 'geofon') {
+      const geofonData = await getGeofonData();
+      earthquakes = geofonData.map((eq): Earthquake => ({
+        id: eq.eventId,
+        date: new Date(eq.time),
+        magnitude: parseFloat(eq.magnitude),
+        depth: parseFloat(eq.depth),
+        latitude: parseFloat(eq.latitude),
+        longitude: parseFloat(eq.longitude),
+        location: eq.location,
+        source: 'GEOFON',
+        province: eq.location.split('-')[0]?.trim() || '',
+        district: eq.location.split('-')[1]?.trim() || '',
       }));
     }
 
