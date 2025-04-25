@@ -9,6 +9,8 @@ import { QueryProvider } from "@/components/providers/query-provider";
 import "leaflet/dist/leaflet.css"
 import { PageTransition } from "@/components/page-transition"
 import { cn } from "@/lib/utils";
+import { Analytics } from '@vercel/analytics/next';
+
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -79,6 +81,8 @@ export default function RootLayout({
               <main className="flex-grow">
                 <PageTransition>
                   {children}
+                  <Analytics />
+
                 </PageTransition>
               </main>
               <Footer />
