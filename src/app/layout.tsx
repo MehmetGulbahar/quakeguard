@@ -69,6 +69,19 @@ export default function RootLayout({
           inter.className
         )}
       >
+         {/* Google Analytics Scriptleri */}
+       <Script
+        src="https://www.googletagmanager.com/gtag/js?id=G-BEZ1W4JHK4"
+       strategy="afterInteractive"
+       />
+       <Script id="google-analytics" strategy="afterInteractive">
+               {`
+           window.dataLayer = window.dataLayer || [];
+           function gtag(){dataLayer.push(arguments);}
+           gtag('js', new Date());
+           gtag('config', 'G-BEZ1W4JHK4');
+         `}
+       </Script>     
         <ThemeProvider
           attribute="class"
           defaultTheme="system"
