@@ -6,7 +6,7 @@ export interface Earthquake {
   latitude: number;
   longitude: number;
   location: string;
-  source: 'Kandilli' | 'AFAD' | 'USGS' | 'GEOFON';
+  source: 'Kandilli' | 'AFAD' | 'USGS' | 'GEOFON' | 'EMSC';
   province: string;
   district: string;
   neighborhood?: string;

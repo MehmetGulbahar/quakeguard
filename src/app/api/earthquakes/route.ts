@@ -77,6 +77,38 @@ interface GeofonEarthquake {
   location: string;
 }
 
+interface EMSCFeature {
+  type: string;
+  geometry: {
+    type: string;
+    coordinates: number[];
+  };
+  id: string;
+  properties: {
+    source_id: string;
+    source_catalog: string;
+    lastupdate: string;
+    time: string;
+    flynn_region: string;
+    lat: number;
+    lon: number;
+    depth: number;
+    evtype: string;
+    auth: string;
+    mag: number;
+    magtype: string;
+    unid: string;
+  };
+}
+
+interface EMSCResponse {
+  type: string;
+  metadata: {
+    count: number;
+  };
+  features: EMSCFeature[];
+}
+
 function turkishCharFix(text: string): string {
   return text
     .replace(/Ý/g, 'İ')
@@ -273,6 +305,42 @@ async function getGeofonData(): Promise<GeofonEarthquake[]> {
   }
 }
 
+async function getEMSCData(): Promise<EMSCFeature[]> {
+  try {
+    // Türkiye ve çevresindeki depremleri almak için uygun koordinatlar
+    const response = await fetch(
+      'https://www.seismicportal.eu/fdsnws/event/1/query?format=json&minlatitude=35.0&maxlatitude=43.0&minlongitude=25.0&maxlongitude=45.0&orderby=time&limit=20',
+      {
+        method: 'GET',
+        headers: {
+          'Accept': 'application/json',
+          'Content-Type': 'application/json',
+        },
+        cache: 'no-store',
+        next: { revalidate: 0 }
+      }
+    );
+
+    if (!response.ok) {
+      console.error(`EMSC API returned status ${response.status}`);
+      return [];
+    }
+
+    const data: EMSCResponse = await response.json();
+    
+    if (!data.features || !Array.isArray(data.features)) {
+      console.error('EMSC data is not in expected format:', data);
+      return [];
+    }
+
+    return data.features;
+
+  } catch (error) {
+    console.error('EMSC API error:', error);
+    return [];
+  }
+}
+
 export const dynamic = 'force-dynamic';
 
 export async function GET(request: NextRequest) {
@@ -288,6 +356,7 @@ export async function GET(request: NextRequest) {
       let afadData: AfadEarthquake[] = [];
       let usgsData: USGSFeature[] = [];
       let geofonData: GeofonEarthquake[] = [];
+      let emscData: EMSCFeature[] = [];
       
       try {
         kandilliData = await scrapeKandilliData();
@@ -315,6 +384,13 @@ export async function GET(request: NextRequest) {
         console.log(`GEOFON data fetched: ${geofonData.length} records`);
       } catch (error) {
         console.error('Failed to fetch GEOFON data:', error);
+      }
+
+      try {
+        emscData = await getEMSCData();
+        console.log(`EMSC data fetched: ${emscData.length} records`);
+      } catch (error) {
+        console.error('Failed to fetch EMSC data:', error);
       }
 
       const formattedKandilliData = kandilliData.map((eq): Earthquake => ({
@@ -371,7 +447,20 @@ export async function GET(request: NextRequest) {
         district: eq.location.split('-')[1]?.trim() || '',
       }));
 
-      earthquakes = [...formattedKandilliData, ...formattedAfadData, ...formattedUSGSData, ...formattedGeofonData];
+      const formattedEMSCData = emscData.map((feature): Earthquake => ({
+        id: feature.id,
+        date: new Date(feature.properties.time),
+        magnitude: feature.properties.mag,
+        depth: Math.abs(feature.geometry.coordinates[2]), // Mutlak değer alarak negatif değerleri pozitife çeviriyorum
+        latitude: feature.properties.lat,
+        longitude: feature.properties.lon,
+        location: feature.properties.flynn_region || 'Unknown Location',
+        source: 'EMSC',
+        province: feature.properties.flynn_region?.split(' ')[0] || '',
+        district: '',
+      }));
+
+      earthquakes = [...formattedKandilliData, ...formattedAfadData, ...formattedUSGSData, ...formattedGeofonData, ...formattedEMSCData];
       
       earthquakes.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
     } else if (source === 'kandilli') {
@@ -431,6 +520,20 @@ export async function GET(request: NextRequest) {
         source: 'GEOFON',
         province: eq.location.split('-')[0]?.trim() || '',
         district: eq.location.split('-')[1]?.trim() || '',
+      }));
+    } else if (source === 'emsc') {
+      const emscData = await getEMSCData();
+      earthquakes = emscData.map((feature): Earthquake => ({
+        id: feature.id,
+        date: new Date(feature.properties.time),
+        magnitude: feature.properties.mag,
+        depth: Math.abs(feature.geometry.coordinates[2]), // Mutlak değer alarak negatif değerleri pozitife çeviriyorum
+        latitude: feature.properties.lat, // properties.lat kullanıyoruz
+        longitude: feature.properties.lon, // properties.lon kullanıyoruz
+        location: feature.properties.flynn_region || 'Unknown Location',
+        source: 'EMSC',
+        province: feature.properties.flynn_region?.split(' ')[0] || '',
+        district: '',
       }));
     }
 

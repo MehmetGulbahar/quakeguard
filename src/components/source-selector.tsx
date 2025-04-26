@@ -34,6 +34,12 @@ export function SourceSelector({ selectedSource, onSourceChange }: SourceSelecto
       >
         GEOFON
       </Button>
+      <Button
+        variant={selectedSource === 'emsc' ? 'default' : 'outline'}
+        onClick={() => onSourceChange('emsc')}
+      >
+        EMSC
+      </Button>
     </div>
   )
 }
