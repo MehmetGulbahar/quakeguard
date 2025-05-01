@@ -1,15 +1,15 @@
-import { ThemeProvider } from "@/components/theme-provider";
+import { ThemeProvider } from "@/components/layout/theme-provider";
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import Script from "next/script"; // Script bileşenini import ediyoruz
 import "./globals.css";
-import { Navbar } from "@/components/navbar";
-import { Footer } from "@/components/footer";
+import { Footer } from "@/components/layout/footer";
 import { QueryProvider } from "@/components/providers/query-provider";
 import "leaflet/dist/leaflet.css"
-import { PageTransition } from "@/components/page-transition"
+import { PageTransition } from "@/components/layout/page-transition"
 import { cn } from "@/lib/utils";
 import { Analytics } from '@vercel/analytics/next';
+import { Navbar } from "@/components/layout/navbar";
 
 
 const inter = Inter({ subsets: ["latin"] });

@@ -1,11 +1,11 @@
 "use client"
 
-import { Hero } from "@/components/hero";
-import { LatestEarthquakes } from "@/components/latest-earthquakes";
 import { useState } from "react"
 import { useQuery } from "@tanstack/react-query"
 import { getEarthquakes } from "@/services/api"
-import { EarthquakeCard } from "@/components/earthquake-card"
+import { EarthquakeCard } from "@/components/earthquakes/earthquake-card"
+import { Hero } from "@/components/home/hero"
+import { LatestEarthquakes } from "@/components/earthquakes/latest-earthquakes"
 
 export default function Home() {
   return (

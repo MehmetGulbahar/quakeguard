@@ -7,11 +7,11 @@ import { Earthquake } from "@/types/earthquake"
 import { format } from "date-fns"
 import { tr } from "date-fns/locale"
 import { MapPin, Activity, Waves, Ruler, Map } from "lucide-react"
-import { SourceSelector } from "./source-selector"
 import { cn } from "@/lib/utils"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { useRouter } from "next/navigation"
+import { SourceSelector } from "./source-selector"
 
 export function LatestEarthquakes() {
   const router = useRouter()

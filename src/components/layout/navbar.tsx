@@ -1,11 +1,11 @@
 "use client"
 
 import Link from "next/link";
-import { ModeToggle } from "./mode-toggle";
 import { cn } from "@/lib/utils";
 import { usePathname } from "next/navigation";
 import { motion } from "framer-motion";
 import { Activity } from "lucide-react";
+import { ModeToggle } from "../mode-toggle";
 
 const navItems = [
   {

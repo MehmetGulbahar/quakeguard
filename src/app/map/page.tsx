@@ -1,5 +1,5 @@
+import { EarthquakeMap } from "@/components/earthquakes/earthquake-map"
 import { Suspense } from "react"
-import { EarthquakeMap } from "@/components/earthquake-map"
 
 export default function MapPage() {
   return (

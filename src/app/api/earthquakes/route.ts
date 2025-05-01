@@ -307,7 +307,6 @@ async function getGeofonData(): Promise<GeofonEarthquake[]> {
 
 async function getEMSCData(): Promise<EMSCFeature[]> {
   try {
-    // Türkiye ve çevresindeki depremleri almak için uygun koordinatlar
     const response = await fetch(
       'https://www.seismicportal.eu/fdsnws/event/1/query?format=json&minlatitude=35.0&maxlatitude=43.0&minlongitude=25.0&maxlongitude=45.0&orderby=time&limit=20',
       {

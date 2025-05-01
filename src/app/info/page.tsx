@@ -1,4 +1,4 @@
-import { EarthquakeInfo } from "@/components/earthquake-info"
+import { EarthquakeInfo } from "@/components/earthquakes/earthquake-info"
 
 export default function InfoPage() {
   return (

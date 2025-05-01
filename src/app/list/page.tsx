@@ -3,7 +3,7 @@
 import { useState } from "react"
 import { useQuery } from "@tanstack/react-query"
 import { getEarthquakes } from "@/services/api"
-import { LatestEarthquakeCards } from "@/components/latest-earthquake-cards"
+import { LatestEarthquakeCards } from "@/components/home/latest-earthquake-cards"
 
 export default function ListPage() {
   const [showMore, setShowMore] = useState(false)
