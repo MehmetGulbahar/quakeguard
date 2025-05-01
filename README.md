@@ -1,73 +1,73 @@
-# QuakeGuard - Deprem İzleme Sistemi
+# QuakeGuard - Earthquake Monitoring System
 
-QuakeGuard, Türkiye'deki depremleri gerçek zamanlı olarak takip etmenizi sağlayan modern bir web uygulamasıdır. Kandilli Rasathanesi ve AFAD'dan alınan verileri birleştirerek kullanıcılara kapsamlı bir deprem izleme deneyimi sunar.
+QuakeGuard is a modern web application that allows you to monitor earthquakes in Turkey and around the world in real-time. It combines data from multiple sources including Kandilli Observatory, AFAD, USGS, GEOFON, and EMSC to provide users with a comprehensive earthquake monitoring experience.
 
-## Özellikler
+## Features
 
-- 🌍 **Gerçek Zamanlı Harita**: Depremleri interaktif harita üzerinde görüntüleme
-- 📊 **Çoklu Veri Kaynağı**: Kandilli Rasathanesi ve AFAD verilerini tek platformda birleştirme
-- 📱 **Mobil Uyumlu**: Responsive tasarım ile her cihazda sorunsuz çalışma
-- 🌓 **Karanlık/Aydınlık Mod**: Göz yorgunluğunu azaltan tema seçenekleri
-- ⚡ **Anlık Güncellemeler**: 5 dakikada bir otomatik veri güncelleme
-- 🔍 **Detaylı Bilgi**: Her deprem için detaylı bilgi görüntüleme
-- 📍 **Konum Bazlı**: Depremleri haritada konumlarıyla görüntüleme
-- 🎯 **Filtreleme**: Kaynaklara göre deprem verilerini filtreleme
+- 🌍 **Real-Time Map**: View earthquakes on an interactive map
+- 📊 **Multiple Data Sources**: Combine earthquake data from Kandilli Observatory, AFAD, USGS, GEOFON, and EMSC in one platform
+- 📱 **Mobile Compatible**: Responsive design that works seamlessly on all devices
+- 🌓 **Dark/Light Mode**: Theme options that reduce eye strain
+- ⚡ **Instant Updates**: Automatic data updates every 5 minutes
+- 🔍 **Detailed Information**: View detailed information for each earthquake
+- 📍 **Location-Based**: View earthquakes with their locations on the map
+- 🎯 **Filtering**: Filter earthquake data by source
 
-## Teknolojiler
+## Technologies
 
 - **Frontend**: Next.js 14, React, TypeScript
 - **Styling**: Tailwind CSS, Shadcn UI
-- **Harita**: Leaflet
+- **Map**: Leaflet
 - **State Management**: React Query
 - **Animations**: Framer Motion
-- **Data Fetching**: Server-side ve Client-side fetching
+- **Data Fetching**: Server-side and Client-side fetching
+- **Performance**: Vercel Speed Insights
 
-## Başlangıç
+## Getting Started
 
-Geliştirme sunucusunu başlatmak için:
+To start the development server:
 
 ```bash
-# Bağımlılıkları yükleyin
+# Install dependencies
 npm install
 
-# Geliştirme sunucusunu başlatın
+# Start development server
 npm run dev
-# veya
+# or
 yarn dev
-# veya
+# or
 pnpm dev
-# veya
+# or
 bun dev
 ```
 
-[http://localhost:3000](http://localhost:3000) adresini tarayıcınızda açarak uygulamayı görüntüleyebilirsiniz.
+You can view the application by opening [http://localhost:3000](http://localhost:3000) in your browser.
 
-## Kullanım
+## Usage
 
-1. Ana sayfada son depremleri görüntüleyin
-2. Harita görünümüne geçerek depremleri konumlarıyla birlikte inceleyin
-3. Veri kaynağını Kandilli veya AFAD olarak filtreleyebilirsiniz
-4. Her deprem kartındaki harita ikonuna tıklayarak ilgili depremi haritada görüntüleyin
-5. Karanlık/aydınlık mod arasında geçiş yaparak kullanım deneyiminizi özelleştirin
+1. View recent earthquakes on the home page
+2. Switch to the map view to examine earthquakes with their locations
+3. Filter the data source as Kandilli, AFAD, USGS, GEOFON, or EMSC
+4. Click on the map icon on any earthquake card to view that earthquake on the map
+5. Toggle between dark/light mode to customize your experience
 
-## Daha Fazla Bilgi
+## More Information
 
-Next.js hakkında daha fazla bilgi için:
+For more information about Next.js:
 
-- [Next.js Dokümantasyonu](https://nextjs.org/docs) - Next.js özellikleri ve API'si hakkında bilgi edinin.
-- [Next.js Öğrenin](https://nextjs.org/learn) - İnteraktif Next.js eğitimi.
+- [Next.js Documentation](https://nextjs.org/docs) - Learn about Next.js features and API.
+- [Learn Next.js](https://nextjs.org/learn) - An interactive Next.js tutorial.
 
-## Vercel'de Dağıtım
+## Deployment on Vercel
 
-Next.js uygulamanızı dağıtmanın en kolay yolu, Next.js'in yaratıcılarından [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme)'u kullanmaktır.
+The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
 
-Daha fazla detay için [Next.js dağıtım dokümantasyonuna](https://nextjs.org/docs/app/building-your-application/deploying) göz atın.
+Check out the [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
 
-## Katkıda Bulunma
+## Contributing
 
-1. Bu repoyu fork edin
-2. Yeni bir branch oluşturun (`git checkout -b feature/amazing-feature`)
-3. Değişikliklerinizi commit edin (`git commit -m 'feat: Add amazing feature'`)
-4. Branch'inizi push edin (`git push origin feature/amazing-feature`)
-5. Bir Pull Request oluşturun
-
+1. Fork this repository
+2. Create a new branch (`git checkout -b feature/amazing-feature`)
+3. Commit your changes (`git commit -m 'feat: Add amazing feature'`)
+4. Push to the branch (`git push origin feature/amazing-feature`)
+5. Create a Pull Request
