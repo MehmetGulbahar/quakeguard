@@ -1,7 +1,7 @@
 import { ThemeProvider } from "@/components/layout/theme-provider";
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
-import Script from "next/script"; // Script bileşenini import ediyoruz
+import Script from "next/script"; 
 import "./globals.css";
 import { Footer } from "@/components/layout/footer";
 import { QueryProvider } from "@/components/providers/query-provider";
@@ -10,6 +10,8 @@ import { PageTransition } from "@/components/layout/page-transition"
 import { cn } from "@/lib/utils";
 import { Analytics } from '@vercel/analytics/next';
 import { Navbar } from "@/components/layout/navbar";
+import { SpeedInsights } from '@vercel/speed-insights/next';
+
 
 
 const inter = Inter({ subsets: ["latin"] });
@@ -38,7 +40,6 @@ export default function RootLayout({
         <link rel="apple-touch-icon" href="/icons/icon-192x192.png" />
         <link rel="manifest" href="/manifest.json" />
         
-        {/* Grammarly benzeri eklentilerin müdahalesini engellemek için script */}
         <Script id="prevent-extensions" strategy="beforeInteractive">
           {`
             if (typeof window !== 'undefined') {
@@ -69,7 +70,7 @@ export default function RootLayout({
           inter.className
         )}
       >
-         {/* Google Analytics Scriptleri */}
+         {/* Google Analytics Scripts */}
        <Script
         src="https://www.googletagmanager.com/gtag/js?id=G-BEZ1W4JHK4"
        strategy="afterInteractive"
@@ -95,8 +96,8 @@ export default function RootLayout({
                 <PageTransition>
                   {children}
                   <Analytics />
-
                 </PageTransition>
+               <SpeedInsights />
               </main>
               <Footer />
             </div>
