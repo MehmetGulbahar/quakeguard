@@ -1,7 +1,7 @@
 "use client"
 
 import Link from "next/link";
-import { Activity, Linkedin, Github } from "lucide-react";
+import { Activity, Linkedin, Github, Globe } from "lucide-react";
 
 export function Footer() {
   return (
@@ -21,6 +21,14 @@ export function Footer() {
           >
             <Linkedin className="h-4 w-4" />
             <span>Mehmet Gulbahar</span>
+          </Link>
+          <Link 
+            href="https://mehmetgulbahar.com/" 
+            target="_blank"
+            className="flex items-center space-x-1 text-sm text-foreground/60 hover:text-foreground transition-colors"
+          >
+            <Globe className="h-4 w-4" />
+            <span>Website</span>
           </Link>
         </div>
       </div>
