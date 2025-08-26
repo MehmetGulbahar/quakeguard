@@ -1,6 +1,6 @@
 import { ThemeProvider } from "@/components/layout/theme-provider";
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
+import { Plus_Jakarta_Sans } from "next/font/google";
 import Script from "next/script"; 
 import "./globals.css";
 import { Footer } from "@/components/layout/footer";
@@ -14,7 +14,11 @@ import { SpeedInsights } from '@vercel/speed-insights/next';
 
 
 
-const inter = Inter({ subsets: ["latin"] });
+const plusJakarta = Plus_Jakarta_Sans({
+  subsets: ["latin"],
+  weight: ["400", "500", "600", "700"],
+  display: "swap",
+});
 
 export const metadata: Metadata = {
   title: "QuakeGuard - Deprem İzleme Sistemi",
@@ -67,7 +71,7 @@ export default function RootLayout({
         suppressHydrationWarning
         className={cn(
           "min-h-screen bg-background font-sans antialiased",
-          inter.className
+          plusJakarta.className
         )}
       >
          {/* Google Analytics Scripts */}
