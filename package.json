@@ -18,8 +18,8 @@
     "@tanstack/react-query": "^5.66.0",
     "@vercel/analytics": "^1.5.0",
     "@vercel/speed-insights": "^1.2.0",
-    "axios": "1.8.4",
-    "brace-expansion": "2.0.2",
+    "axios": "^1.15.0",
+    "brace-expansion": "2.0.3",
     "cheerio": "^1.0.0",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
@@ -30,16 +30,21 @@
     "framer-motion": "^12.4.2",
     "leaflet": "^1.9.4",
     "lucide-react": "^0.475.0",
-    "next": "15.2.5",
-    "next-pwa": "^5.6.0",
+    "next": "15.5.15",
     "next-themes": "^0.4.4",
     "node-fetch": "^3.3.2",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "react-leaflet": "^5.0.0",
-    "shadcn-ui": "^0.9.4",
     "tailwind-merge": "^3.0.1",
-    "undici": "6.21.3"
+    "undici": "6.24.1"
+  },
+  "overrides": {
+    "form-data": "4.0.4",
+    "glob": "10.5.0",
+    "minimatch": "9.0.7",
+    "picomatch": "2.3.2",
+    "yaml": "2.8.3"
   },
   "devDependencies": {
     "@types/leaflet": "^1.9.16",
