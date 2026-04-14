@@ -1,4 +1,4 @@
-import { getEarthquakesData } from "@/app/api/earthquakes/route";
+import { getEarthquakesData } from "@/lib/earthquakes-data";
 import { Earthquake } from "@/types/earthquake";
 
 export async function fetchEarthquakes(source: string = "all"): Promise<Earthquake[]> {
