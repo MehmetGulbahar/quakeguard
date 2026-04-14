@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { useQuery } from "@tanstack/react-query"
 import { getEarthquakes } from "@/services/api"
 import { Earthquake } from "@/types/earthquake"
@@ -16,6 +16,23 @@ import { SourceSelector } from "./source-selector"
 export function LatestEarthquakes() {
   const router = useRouter()
   const [selectedSource, setSelectedSource] = useState('kandilli')
+  const [cachedEarthquakes, setCachedEarthquakes] = useState<Earthquake[]>([])
+
+  useEffect(() => {
+    const cached = localStorage.getItem(`quakeguard_earthquakes_${selectedSource}`)
+    if (!cached) {
+      return
+    }
+
+    try {
+      const parsed = JSON.parse(cached) as Earthquake[]
+      if (Array.isArray(parsed)) {
+        setCachedEarthquakes(parsed)
+      }
+    } catch {
+      // ignore broken local cache payloads
+    }
+  }, [selectedSource])
   
   const { data: earthquakes, isLoading } = useQuery({
     queryKey: ["earthquakes", selectedSource],
@@ -23,7 +40,18 @@ export function LatestEarthquakes() {
     refetchInterval: 5 * 60 * 1000,
   })
 
-  if (isLoading) {
+  useEffect(() => {
+    if (!earthquakes?.length) {
+      return
+    }
+
+    localStorage.setItem(`quakeguard_earthquakes_${selectedSource}`, JSON.stringify(earthquakes))
+    setCachedEarthquakes(earthquakes)
+  }, [earthquakes, selectedSource])
+
+  const earthquakeData = earthquakes?.length ? earthquakes : cachedEarthquakes
+
+  if (isLoading && earthquakeData.length === 0) {
     return (
       <div className="p-4 space-y-4">
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
@@ -50,7 +78,7 @@ export function LatestEarthquakes() {
     )
   }
 
-  const sortedEarthquakes = earthquakes?.sort((a, b) => 
+  const sortedEarthquakes = earthquakeData?.sort((a, b) => 
     new Date(b.date).getTime() - new Date(a.date).getTime()
   )
 

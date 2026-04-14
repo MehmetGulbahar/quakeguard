@@ -6,10 +6,10 @@ export function Hero() {
     <section className="container py-12 md:py-20">
       <div className="mx-auto max-w-none text-center space-y-6">
         <h1 className="text-3xl font-bold tracking-tight md:text-5xl whitespace-nowrap">
-          Deprem Bilgilendirme Sistemi
+          Türkiye Canlı Deprem Takip Sistemi
         </h1>
         <p className="mx-auto max-w-2xl text-lg sm:text-xl text-muted-foreground">
-          Türkiye ve dünya genelindeki depremleri gerçek zamanlı olarak takip edin.
+          Son deprem nerede oldu sorusuna anında yanıt alın. İzmir, İstanbul, Ankara ve dünya genelindeki depremleri gerçek zamanlı takip edin.
         </p>
         <div className="flex items-center justify-center gap-3">
           <Link href="/map">

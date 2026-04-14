@@ -1,7 +1,9 @@
 "use client"
 
+import { useEffect, useState } from "react"
 import { useQuery } from "@tanstack/react-query"
 import { getEarthquakes } from "@/services/api"
+import { Earthquake } from "@/types/earthquake"
 import { format } from "date-fns"
 import { tr } from "date-fns/locale"
 import { MapPin, Activity, ArrowRight, Waves, Ruler } from "lucide-react"
@@ -13,13 +15,42 @@ interface LatestEarthquakeCardsProps {
 }
 
 export function LatestEarthquakeCards({ displayCount = 1 }: LatestEarthquakeCardsProps) {
+  const [cachedEarthquakes, setCachedEarthquakes] = useState<Earthquake[]>([])
+
+  useEffect(() => {
+    const cached = localStorage.getItem("quakeguard_earthquakes_all")
+    if (!cached) {
+      return
+    }
+
+    try {
+      const parsed = JSON.parse(cached) as Earthquake[]
+      if (Array.isArray(parsed)) {
+        setCachedEarthquakes(parsed)
+      }
+    } catch {
+      // ignore broken local cache payloads
+    }
+  }, [])
+
   const { data: earthquakes, isLoading } = useQuery({
     queryKey: ["earthquakes", "all"],
     queryFn: () => getEarthquakes("all"),
     refetchInterval: 5 * 60 * 1000,
   })
 
-  if (isLoading) {
+  useEffect(() => {
+    if (!earthquakes?.length) {
+      return
+    }
+
+    localStorage.setItem("quakeguard_earthquakes_all", JSON.stringify(earthquakes))
+    setCachedEarthquakes(earthquakes)
+  }, [earthquakes])
+
+  const earthquakeData = earthquakes?.length ? earthquakes : cachedEarthquakes
+
+  if (isLoading && earthquakeData.length === 0) {
     return (
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         {[...Array(2)].map((_, i) => (
@@ -39,8 +70,8 @@ export function LatestEarthquakeCards({ displayCount = 1 }: LatestEarthquakeCard
     )
   }
 
-  const afadEarthquakes = earthquakes?.filter(eq => eq.source === 'AFAD') || []
-  const kandilliEarthquakes = earthquakes?.filter(eq => eq.source === 'Kandilli') || []
+  const afadEarthquakes = earthquakeData?.filter(eq => eq.source === 'AFAD') || []
+  const kandilliEarthquakes = earthquakeData?.filter(eq => eq.source === 'Kandilli') || []
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">

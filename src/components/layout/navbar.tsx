@@ -6,6 +6,7 @@ import { usePathname } from "next/navigation";
 import { motion } from "framer-motion";
 import { Activity } from "lucide-react";
 import { ModeToggle } from "../mode-toggle";
+import { PushControls } from "@/components/pwa/push-controls";
 
 const navItems = [
   {
@@ -62,6 +63,9 @@ export function Navbar() {
           </nav>
         </div>
         <div className="flex items-center justify-end space-x-4">
+          <div className="hidden lg:block">
+            <PushControls />
+          </div>
           <ModeToggle />
         </div>
       </div>

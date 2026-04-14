@@ -64,6 +64,90 @@ The easiest way to deploy your Next.js app is to use the [Vercel Platform](https
 
 Check out the [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
 
+## PWA and Push Notification Setup
+
+QuakeGuard is configured as a Progressive Web App with offline support, install prompt UX,
+service worker caching, background sync, and Web Push notifications.
+
+### 1) VAPID Keys
+
+Generate VAPID keys once and set them as environment variables:
+
+```bash
+npx web-push generate-vapid-keys
+```
+
+Set these in `.env.local` and Vercel project settings:
+
+```bash
+NEXT_PUBLIC_VAPID_PUBLIC_KEY=...
+VAPID_PRIVATE_KEY=...
+VAPID_SUBJECT=mailto:alerts@quakeguard.app
+NEXT_PUBLIC_SITE_URL=https://your-domain.com
+```
+
+### 2) Service Worker
+
+Custom service worker file:
+
+- `public/sw.js`
+
+Implemented features:
+
+- App shell caching (`/`, `/list`, `/map`, `/info`, `/offline`)
+- Static asset caching (JS/CSS/font/image)
+- API stale-while-revalidate for `/api/earthquakes`
+- Map tile caching (`tile.openstreetmap.org`)
+- Offline fallback to `/offline`
+- Push event handling and notification click routing
+- Background sync (`sync-earthquakes`) on reconnect
+
+### 3) Manifest
+
+Static manifest for installability:
+
+- `public/manifest.json`
+
+Includes:
+
+- standalone display mode
+- 192x192 and 512x512 icons
+- maskable icon
+- install screenshots
+
+### 4) Push API Endpoints
+
+- `GET /api/push/vapid-public-key`
+- `POST /api/push/subscribe`
+- `POST /api/push/unsubscribe`
+- `POST /api/push/test`
+- `POST /api/push/broadcast`
+
+`/api/push/test` can be used to validate notification delivery in production.
+`/api/push/broadcast` sends an alert payload to all active subscriptions.
+
+### 5) Lighthouse Targets
+
+For high PWA Lighthouse score:
+
+- Build with `npm run build`
+- Serve with `npm run start`
+- Run Lighthouse against production build
+
+Recommended checks:
+
+- Installability
+- Service worker active and controlling the page
+- Offline route works (`/offline`)
+- Push permission and test notification flow
+
+### 6) Notes for Production
+
+- The current subscription store is in-memory and resets on process restart.
+- For production reliability, persist subscriptions in a durable database (Postgres/Redis).
+- Trigger earthquake alerts from backend events by calling `web-push` with saved subscriptions.
+- Keep VAPID private key server-side only.
+
 ## Contributing
 
 1. Fork this repository

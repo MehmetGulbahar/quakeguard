@@ -1,1 +1,255 @@
-if(!self.define){let e,s={};const i=(i,a)=>(i=new URL(i+".js",a).href,s[i]||new Promise((s=>{if("document"in self){const e=document.createElement("script");e.src=i,e.onload=s,document.head.appendChild(e)}else e=i,importScripts(i),s()})).then((()=>{let e=s[i];if(!e)throw new Error(`Module ${i} didn’t register its module`);return e})));self.define=(a,n)=>{const t=e||("document"in self?document.currentScript.src:"")||location.href;if(s[t])return;let c={};const r=e=>i(e,t),o={module:{uri:t},exports:c,require:r};s[t]=Promise.all(a.map((e=>o[e]||r(e)))).then((e=>(n(...e),c)))}}define(["./workbox-4754cb34"],(function(e){"use strict";importScripts(),self.skipWaiting(),e.clientsClaim(),e.precacheAndRoute([{url:"/_next/app-build-manifest.json",revision:"5f1a0940dcd29f69fe7fd12a62e558cc"},{url:"/_next/static/chunks/181-ae2cda053c187c13.js",revision:"fxZ1R0Y4rO90DiXu0Uuoo"},{url:"/_next/static/chunks/203.2b4c1ee4fbe3a7cf.js",revision:"2b4c1ee4fbe3a7cf"},{url:"/_next/static/chunks/218.57a830a2c55ba802.js",revision:"57a830a2c55ba802"},{url:"/_next/static/chunks/219.8f968b8a505a9921.js",revision:"8f968b8a505a9921"},{url:"/_next/static/chunks/282-001eed8be2ebc007.js",revision:"fxZ1R0Y4rO90DiXu0Uuoo"},{url:"/_next/static/chunks/326-fe19e6f18cfe6e56.js",revision:"fxZ1R0Y4rO90DiXu0Uuoo"},{url:"/_next/static/chunks/371-4dc43dc34ba99189.js",revision:"fxZ1R0Y4rO90DiXu0Uuoo"},{url:"/_next/static/chunks/451-f70af2d1c7267a20.js",revision:"fxZ1R0Y4rO90DiXu0Uuoo"},{url:"/_next/static/chunks/4bd1b696-a34d989e45bf3256.js",revision:"fxZ1R0Y4rO90DiXu0Uuoo"},{url:"/_next/static/chunks/517-e4a5c302edcc6c7b.js",revision:"fxZ1R0Y4rO90DiXu0Uuoo"},{url:"/_next/static/chunks/527-7941cf41e4cb8a36.js",revision:"fxZ1R0Y4rO90DiXu0Uuoo"},{url:"/_next/static/chunks/777-f8ec5e7c5a56bb01.js",revision:"fxZ1R0Y4rO90DiXu0Uuoo"},{url:"/_next/static/chunks/906-44a1ca67cc2932c8.js",revision:"fxZ1R0Y4rO90DiXu0Uuoo"},{url:"/_next/static/chunks/app/_not-found/page-da259bba70f78b71.js",revision:"fxZ1R0Y4rO90DiXu0Uuoo"},{url:"/_next/static/chunks/app/api/earthquakes/route-6b84be6683d8d1b5.js",revision:"fxZ1R0Y4rO90DiXu0Uuoo"},{url:"/_next/static/chunks/app/info/page-3b26132e2ee49fd1.js",revision:"fxZ1R0Y4rO90DiXu0Uuoo"},{url:"/_next/static/chunks/app/layout-ff6442eda87ea7a8.js",revision:"fxZ1R0Y4rO90DiXu0Uuoo"},{url:"/_next/static/chunks/app/list/page-9fc8828047f57178.js",revision:"fxZ1R0Y4rO90DiXu0Uuoo"},{url:"/_next/static/chunks/app/map/page-7dfaf72135ba72d3.js",revision:"fxZ1R0Y4rO90DiXu0Uuoo"},{url:"/_next/static/chunks/app/page-8834e9718ffb139f.js",revision:"fxZ1R0Y4rO90DiXu0Uuoo"},{url:"/_next/static/chunks/d0deef33-9bc9c158f7f98d1e.js",revision:"fxZ1R0Y4rO90DiXu0Uuoo"},{url:"/_next/static/chunks/framework-6b27c2b7aa38af2d.js",revision:"fxZ1R0Y4rO90DiXu0Uuoo"},{url:"/_next/static/chunks/main-app-475bd2260bca059b.js",revision:"fxZ1R0Y4rO90DiXu0Uuoo"},{url:"/_next/static/chunks/main-ecd615a9318f36f1.js",revision:"fxZ1R0Y4rO90DiXu0Uuoo"},{url:"/_next/static/chunks/pages/_app-430fec730128923e.js",revision:"fxZ1R0Y4rO90DiXu0Uuoo"},{url:"/_next/static/chunks/pages/_error-2d7241423c4a35ba.js",revision:"fxZ1R0Y4rO90DiXu0Uuoo"},{url:"/_next/static/chunks/polyfills-42372ed130431b0a.js",revision:"846118c33b2c0e922d7b3a7676f81f6f"},{url:"/_next/static/chunks/webpack-6f009dfc83d2e0c6.js",revision:"fxZ1R0Y4rO90DiXu0Uuoo"},{url:"/_next/static/css/7deca7b84fbd390c.css",revision:"7deca7b84fbd390c"},{url:"/_next/static/css/857aa62baa17c894.css",revision:"857aa62baa17c894"},{url:"/_next/static/fxZ1R0Y4rO90DiXu0Uuoo/_buildManifest.js",revision:"ea0733393225220ae6653630eff866b6"},{url:"/_next/static/fxZ1R0Y4rO90DiXu0Uuoo/_ssgManifest.js",revision:"b6652df95db52feb4daf4eca35380933"},{url:"/_next/static/media/26a46d62cd723877-s.woff2",revision:"befd9c0fdfa3d8a645d5f95717ed6420"},{url:"/_next/static/media/55c55f0601d81cf3-s.woff2",revision:"43828e14271c77b87e3ed582dbff9f74"},{url:"/_next/static/media/581909926a08bbc8-s.woff2",revision:"f0b86e7c24f455280b8df606b89af891"},{url:"/_next/static/media/6d93bde91c0c2823-s.woff2",revision:"621a07228c8ccbfd647918f1021b4868"},{url:"/_next/static/media/97e0cb1ae144a2a9-s.woff2",revision:"e360c61c5bd8d90639fd4503c829c2dc"},{url:"/_next/static/media/a34f9d1faa5f3315-s.p.woff2",revision:"d4fe31e6a2aebc06b8d6e558c9141119"},{url:"/_next/static/media/df0a9ae256c0569c-s.woff2",revision:"d54db44de5ccb18886ece2fda72bdfe0"},{url:"/_next/static/media/layers-2x.9859cd12.png",revision:"9859cd12"},{url:"/_next/static/media/layers.ef6db872.png",revision:"ef6db872"},{url:"/_next/static/media/marker-icon.d577052a.png",revision:"d577052a"},{url:"/file.svg",revision:"d09f95206c3fa0bb9bd9fefabfd0ea71"},{url:"/globe.svg",revision:"2aaafa6a49b6563925fe440891e32717"},{url:"/icons/marker.svg",revision:"eb849f0fb2089008a21f57e750376ddf"},{url:"/icons/shadowmarker.png",revision:"1fa8bc03a6688a657e773b7548f2de03"},{url:"/images/marker-icon.png",revision:"da075b0e4fb70a322099c1913f73f26c"},{url:"/images/marker-shadow.png",revision:"535e338be47f5d969870615fa81c007c"},{url:"/next.svg",revision:"8e061864f388b47f33a1c3780831193e"},{url:"/vercel.svg",revision:"c0af2f507b369b085b35ef4bbe3bcf1e"},{url:"/window.svg",revision:"a2760511c65806022ad20adf74370ff3"}],{ignoreURLParametersMatching:[]}),e.cleanupOutdatedCaches(),e.registerRoute("/",new e.NetworkFirst({cacheName:"start-url",plugins:[{cacheWillUpdate:async({request:e,response:s,event:i,state:a})=>s&&"opaqueredirect"===s.type?new Response(s.body,{status:200,statusText:"OK",headers:s.headers}):s}]}),"GET"),e.registerRoute(/^https:\/\/fonts\.(?:gstatic)\.com\/.*/i,new e.CacheFirst({cacheName:"google-fonts-webfonts",plugins:[new e.ExpirationPlugin({maxEntries:4,maxAgeSeconds:31536e3})]}),"GET"),e.registerRoute(/^https:\/\/fonts\.(?:googleapis)\.com\/.*/i,new e.StaleWhileRevalidate({cacheName:"google-fonts-stylesheets",plugins:[new e.ExpirationPlugin({maxEntries:4,maxAgeSeconds:604800})]}),"GET"),e.registerRoute(/\.(?:eot|otf|ttc|ttf|woff|woff2|font.css)$/i,new e.StaleWhileRevalidate({cacheName:"static-font-assets",plugins:[new e.ExpirationPlugin({maxEntries:4,maxAgeSeconds:604800})]}),"GET"),e.registerRoute(/\.(?:jpg|jpeg|gif|png|svg|ico|webp)$/i,new e.StaleWhileRevalidate({cacheName:"static-image-assets",plugins:[new e.ExpirationPlugin({maxEntries:64,maxAgeSeconds:86400})]}),"GET"),e.registerRoute(/\/_next\/image\?url=.+$/i,new e.StaleWhileRevalidate({cacheName:"next-image",plugins:[new e.ExpirationPlugin({maxEntries:64,maxAgeSeconds:86400})]}),"GET"),e.registerRoute(/\.(?:mp3|wav|ogg)$/i,new e.CacheFirst({cacheName:"static-audio-assets",plugins:[new e.RangeRequestsPlugin,new e.ExpirationPlugin({maxEntries:32,maxAgeSeconds:86400})]}),"GET"),e.registerRoute(/\.(?:mp4)$/i,new e.CacheFirst({cacheName:"static-video-assets",plugins:[new e.RangeRequestsPlugin,new e.ExpirationPlugin({maxEntries:32,maxAgeSeconds:86400})]}),"GET"),e.registerRoute(/\.(?:js)$/i,new e.StaleWhileRevalidate({cacheName:"static-js-assets",plugins:[new e.ExpirationPlugin({maxEntries:32,maxAgeSeconds:86400})]}),"GET"),e.registerRoute(/\.(?:css|less)$/i,new e.StaleWhileRevalidate({cacheName:"static-style-assets",plugins:[new e.ExpirationPlugin({maxEntries:32,maxAgeSeconds:86400})]}),"GET"),e.registerRoute(/\/_next\/data\/.+\/.+\.json$/i,new e.StaleWhileRevalidate({cacheName:"next-data",plugins:[new e.ExpirationPlugin({maxEntries:32,maxAgeSeconds:86400})]}),"GET"),e.registerRoute(/\.(?:json|xml|csv)$/i,new e.NetworkFirst({cacheName:"static-data-assets",plugins:[new e.ExpirationPlugin({maxEntries:32,maxAgeSeconds:86400})]}),"GET"),e.registerRoute((({url:e})=>{if(!(self.origin===e.origin))return!1;const s=e.pathname;return!s.startsWith("/api/auth/")&&!!s.startsWith("/api/")}),new e.NetworkFirst({cacheName:"apis",networkTimeoutSeconds:10,plugins:[new e.ExpirationPlugin({maxEntries:16,maxAgeSeconds:86400})]}),"GET"),e.registerRoute((({url:e})=>{if(!(self.origin===e.origin))return!1;return!e.pathname.startsWith("/api/")}),new e.NetworkFirst({cacheName:"others",networkTimeoutSeconds:10,plugins:[new e.ExpirationPlugin({maxEntries:32,maxAgeSeconds:86400})]}),"GET"),e.registerRoute((({url:e})=>!(self.origin===e.origin)),new e.NetworkFirst({cacheName:"cross-origin",networkTimeoutSeconds:10,plugins:[new e.ExpirationPlugin({maxEntries:32,maxAgeSeconds:3600})]}),"GET")}));
+const CACHE_VERSION = "quakeguard-v1";
+const APP_SHELL_CACHE = `${CACHE_VERSION}-app-shell`;
+const STATIC_CACHE = `${CACHE_VERSION}-static`;
+const API_CACHE = `${CACHE_VERSION}-api`;
+const TILE_CACHE = `${CACHE_VERSION}-tiles`;
+const META_CACHE = `${CACHE_VERSION}-meta`;
+const META_LATEST_EARTHQUAKE = "/__quakeguard/latest-earthquake";
+const APP_SHELL = [
+  "/",
+  "/list",
+  "/map",
+  "/info",
+  "/offline",
+  "/manifest.json",
+  "/icons/icon-192x192.png",
+  "/icons/icon-512x512.png",
+  "/icons/icon-512x512-maskable.png"
+];
+
+self.addEventListener("install", (event) => {
+  event.waitUntil(
+    caches.open(APP_SHELL_CACHE).then((cache) => cache.addAll(APP_SHELL)).then(() => self.skipWaiting())
+  );
+});
+
+self.addEventListener("activate", (event) => {
+  event.waitUntil(
+    caches
+      .keys()
+      .then((keys) =>
+        Promise.all(
+          keys
+            .filter((key) => ![APP_SHELL_CACHE, STATIC_CACHE, API_CACHE, TILE_CACHE].includes(key))
+            .map((key) => caches.delete(key))
+        )
+      )
+      .then(() => self.clients.claim())
+  );
+});
+
+self.addEventListener("message", (event) => {
+  if (event.data?.type === "SKIP_WAITING") {
+    self.skipWaiting();
+  }
+});
+
+async function staleWhileRevalidate(request, cacheName) {
+  const cache = await caches.open(cacheName);
+  const cached = await cache.match(request);
+
+  const networkPromise = fetch(request)
+    .then((response) => {
+      if (response && response.ok) {
+        cache.put(request, response.clone());
+      }
+      return response;
+    })
+    .catch(() => undefined);
+
+  return cached || networkPromise || Response.error();
+}
+
+async function networkFirst(request, cacheName, fallbackUrl) {
+  const cache = await caches.open(cacheName);
+
+  try {
+    const networkResponse = await fetch(request);
+    if (networkResponse && networkResponse.ok) {
+      cache.put(request, networkResponse.clone());
+    }
+    return networkResponse;
+  } catch {
+    const cached = await cache.match(request);
+    if (cached) {
+      return cached;
+    }
+
+    if (fallbackUrl) {
+      const fallback = await caches.match(fallbackUrl);
+      if (fallback) {
+        return fallback;
+      }
+    }
+
+    return Response.error();
+  }
+}
+
+async function cacheFirst(request, cacheName) {
+  const cache = await caches.open(cacheName);
+  const cached = await cache.match(request);
+  if (cached) {
+    return cached;
+  }
+
+  const response = await fetch(request);
+  if (response && response.ok) {
+    cache.put(request, response.clone());
+  }
+  return response;
+}
+
+async function readLatestEarthquakeMeta() {
+  const cache = await caches.open(META_CACHE);
+  const response = await cache.match(META_LATEST_EARTHQUAKE);
+
+  if (!response) {
+    return null;
+  }
+
+  try {
+    return await response.json();
+  } catch {
+    return null;
+  }
+}
+
+async function writeLatestEarthquakeMeta(meta) {
+  const cache = await caches.open(META_CACHE);
+  await cache.put(
+    META_LATEST_EARTHQUAKE,
+    new Response(JSON.stringify(meta), {
+      headers: {
+        "Content-Type": "application/json",
+      },
+    }),
+  );
+}
+
+self.addEventListener("fetch", (event) => {
+  const request = event.request;
+  const url = new URL(request.url);
+
+  if (request.method !== "GET") {
+    return;
+  }
+
+  if (request.mode === "navigate") {
+    event.respondWith(networkFirst(request, APP_SHELL_CACHE, "/offline"));
+    return;
+  }
+
+  if (url.pathname.startsWith("/api/earthquakes")) {
+    event.respondWith(staleWhileRevalidate(request, API_CACHE));
+    return;
+  }
+
+  if (url.hostname.includes("tile.openstreetmap.org")) {
+    event.respondWith(staleWhileRevalidate(request, TILE_CACHE));
+    return;
+  }
+
+  const destination = request.destination;
+  if (["style", "script", "font", "image"].includes(destination)) {
+    event.respondWith(cacheFirst(request, STATIC_CACHE));
+    return;
+  }
+
+  if (url.origin === self.location.origin) {
+    event.respondWith(staleWhileRevalidate(request, APP_SHELL_CACHE));
+  }
+});
+
+self.addEventListener("push", (event) => {
+  const payload = event.data ? event.data.json() : {};
+  const title = payload.title || "QuakeGuard Acil Uyari";
+  const body = payload.body || "Yeni bir deprem bildirimi var.";
+
+  const options = {
+    body,
+    icon: "/icons/icon-192x192.png",
+    badge: "/icons/icon-192x192.png",
+    data: {
+      url: payload.url || "/list",
+    },
+    tag: payload.tag || "quakeguard-alert",
+    renotify: true,
+  };
+
+  event.waitUntil(self.registration.showNotification(title, options));
+});
+
+self.addEventListener("notificationclick", (event) => {
+  event.notification.close();
+
+  const url = event.notification.data?.url || "/";
+  event.waitUntil(
+    clients.matchAll({ type: "window", includeUncontrolled: true }).then((windowClients) => {
+      const existingClient = windowClients.find((client) => client.url.includes(self.location.origin));
+      if (existingClient) {
+        existingClient.focus();
+        existingClient.navigate(url);
+        return;
+      }
+
+      return clients.openWindow(url);
+    })
+  );
+});
+
+self.addEventListener("sync", (event) => {
+  if (event.tag === "sync-earthquakes") {
+    event.waitUntil(
+      fetch("/api/earthquakes?source=all")
+        .then((response) => response.json())
+        .then(async (earthquakes) => {
+          if (Array.isArray(earthquakes) && earthquakes.length > 0) {
+            const latest = earthquakes[0];
+            const previous = await readLatestEarthquakeMeta();
+
+            if (previous?.id && previous.id !== latest.id) {
+              await self.registration.showNotification("Son 5 dakika icinde deprem kaydedildi", {
+                body: `${latest.location || "Turkiye"} ${Number(latest.magnitude || 0).toFixed(1)}`,
+                icon: "/icons/icon-192x192.png",
+                badge: "/icons/icon-192x192.png",
+                tag: "earthquake-sync-alert",
+                data: {
+                  url: "/list",
+                },
+              });
+            }
+
+            await writeLatestEarthquakeMeta({
+              id: latest.id,
+              updatedAt: Date.now(),
+            });
+          }
+
+          return clients.matchAll({ includeUncontrolled: true, type: "window" }).then((clientList) => {
+            clientList.forEach((client) => client.postMessage({ type: "EARTHQUAKE_SYNC_COMPLETED" }));
+          });
+        })
+        .catch(() => undefined)
+    );
+  }
+});
+
+self.addEventListener("periodicsync", (event) => {
+  if (event.tag === "periodic-earthquake-refresh") {
+    event.waitUntil(
+      fetch("/api/earthquakes?source=all")
+        .then((response) => response.json())
+        .then((earthquakes) => {
+          if (Array.isArray(earthquakes) && earthquakes.length > 0) {
+            return writeLatestEarthquakeMeta({
+              id: earthquakes[0].id,
+              updatedAt: Date.now(),
+            });
+          }
+          return undefined;
+        })
+        .catch(() => undefined)
+    );
+  }
+});
