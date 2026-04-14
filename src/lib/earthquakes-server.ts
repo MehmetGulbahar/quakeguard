@@ -1,21 +1,8 @@
-import { SITE_URL } from "@/lib/seo";
+import { getEarthquakesData } from "@/app/api/earthquakes/route";
 import { Earthquake } from "@/types/earthquake";
 
 export async function fetchEarthquakes(source: string = "all"): Promise<Earthquake[]> {
-  try {
-    const response = await fetch(`${SITE_URL}/api/earthquakes?source=${source}`, {
-      next: { revalidate: 120 },
-    });
-
-    if (!response.ok) {
-      return [];
-    }
-
-    const data = (await response.json()) as Earthquake[];
-    return Array.isArray(data) ? data : [];
-  } catch {
-    return [];
-  }
+  return getEarthquakesData(source);
 }
 
 export async function fetchEarthquakeById(id: string): Promise<Earthquake | null> {

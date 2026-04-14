@@ -341,200 +341,197 @@ async function getEMSCData(): Promise<EMSCFeature[]> {
 }
 
 export const dynamic = 'force-dynamic';
+export const runtime = 'nodejs';
+export const maxDuration = 60;
+
+export async function getEarthquakesData(source: string = 'all'): Promise<Earthquake[]> {
+  let earthquakes: Earthquake[] = [];
+
+  if (source === 'all') {
+    console.log('Fetching data from all sources...');
+
+    const [kandilliResult, usgsResult, afadResult, geofonResult, emscResult] = await Promise.allSettled([
+      scrapeKandilliData(),
+      getUSGSData(),
+      getAfadData(),
+      getGeofonData(),
+      getEMSCData(),
+    ]);
+
+    const kandilliData = kandilliResult.status === 'fulfilled' ? kandilliResult.value : [];
+    const usgsData = usgsResult.status === 'fulfilled' ? usgsResult.value : [];
+    const afadData = afadResult.status === 'fulfilled' ? afadResult.value : [];
+    const geofonData = geofonResult.status === 'fulfilled' ? geofonResult.value : [];
+    const emscData = emscResult.status === 'fulfilled' ? emscResult.value : [];
+
+    if (kandilliResult.status === 'rejected') console.error('Failed to fetch Kandilli data:', kandilliResult.reason);
+    if (usgsResult.status === 'rejected') console.error('Failed to fetch USGS data:', usgsResult.reason);
+    if (afadResult.status === 'rejected') console.error('Failed to fetch AFAD data:', afadResult.reason);
+    if (geofonResult.status === 'rejected') console.error('Failed to fetch GEOFON data:', geofonResult.reason);
+    if (emscResult.status === 'rejected') console.error('Failed to fetch EMSC data:', emscResult.reason);
+
+    const formattedKandilliData = kandilliData.map((eq): Earthquake => ({
+      id: `kandilli-${eq.date}-${eq.time}`,
+      date: new Date(`${eq.date} ${eq.time} GMT+0300`),
+      magnitude: parseFloat(eq.ml) || parseFloat(eq.mw) || parseFloat(eq.md) || 0,
+      depth: parseFloat(eq.depth),
+      latitude: parseFloat(eq.latitude),
+      longitude: parseFloat(eq.longitude),
+      location: eq.location,
+      source: 'Kandilli',
+      province: eq.location.split('-')[0]?.trim() || '',
+      district: eq.location.split('-')[1]?.trim() || '',
+      quality: eq.quality
+    }));
+
+    const formattedAfadData = afadData.map((eq): Earthquake => ({
+      id: eq.eventID,
+      date: new Date(eq.date),
+      magnitude: eq.magnitude,
+      depth: eq.depth,
+      latitude: eq.latitude,
+      longitude: eq.longitude,
+      location: eq.location,
+      source: 'AFAD',
+      province: eq.province,
+      district: eq.district,
+      neighborhood: eq.neighborhood
+    }));
+
+    const formattedUSGSData = usgsData.map((feature): Earthquake => ({
+      id: feature.id,
+      date: new Date(feature.properties.time),
+      magnitude: feature.properties.mag,
+      depth: feature.geometry.coordinates[2],
+      latitude: feature.geometry.coordinates[1],
+      longitude: feature.geometry.coordinates[0],
+      location: feature.properties.place,
+      source: 'USGS',
+      province: feature.properties.place.split(' of ')[1] || '',
+      district: '',
+    }));
+
+    const formattedGeofonData = geofonData.map((eq): Earthquake => ({
+      id: eq.eventId,
+      date: new Date(eq.time),
+      magnitude: parseFloat(eq.magnitude),
+      depth: parseFloat(eq.depth),
+      latitude: parseFloat(eq.latitude),
+      longitude: parseFloat(eq.longitude),
+      location: eq.location,
+      source: 'GEOFON',
+      province: eq.location.split('-')[0]?.trim() || '',
+      district: eq.location.split('-')[1]?.trim() || '',
+    }));
+
+    const formattedEMSCData = emscData.map((feature): Earthquake => ({
+      id: feature.id,
+      date: new Date(feature.properties.time),
+      magnitude: feature.properties.mag,
+      depth: Math.abs(feature.geometry.coordinates[2]),
+      latitude: feature.properties.lat,
+      longitude: feature.properties.lon,
+      location: feature.properties.flynn_region || 'Unknown Location',
+      source: 'EMSC',
+      province: feature.properties.flynn_region?.split(' ')[0] || '',
+      district: '',
+    }));
+
+    earthquakes = [...formattedKandilliData, ...formattedAfadData, ...formattedUSGSData, ...formattedGeofonData, ...formattedEMSCData];
+    earthquakes.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+    return earthquakes;
+  }
+
+  if (source === 'kandilli') {
+    const kandilliData = await scrapeKandilliData();
+    return kandilliData.map((eq): Earthquake => ({
+      id: `kandilli-${eq.date}-${eq.time}`,
+      date: new Date(`${eq.date} ${eq.time} GMT+0300`),
+      magnitude: parseFloat(eq.ml) || parseFloat(eq.mw) || parseFloat(eq.md) || 0,
+      depth: parseFloat(eq.depth),
+      latitude: parseFloat(eq.latitude),
+      longitude: parseFloat(eq.longitude),
+      location: eq.location,
+      source: 'Kandilli',
+      province: eq.location.split('-')[0]?.trim() || '',
+      district: eq.location.split('-')[1]?.trim() || '',
+      quality: eq.quality
+    }));
+  }
+
+  if (source === 'afad') {
+    const afadData = await getAfadData();
+    return afadData.map((eq): Earthquake => ({
+      id: eq.eventID,
+      date: new Date(eq.date),
+      magnitude: eq.magnitude,
+      depth: eq.depth,
+      latitude: eq.latitude,
+      longitude: eq.longitude,
+      location: eq.location,
+      source: 'AFAD',
+      province: eq.province,
+      district: eq.district,
+      neighborhood: eq.neighborhood
+    }));
+  }
+
+  if (source === 'usgs') {
+    const usgsData = await getUSGSData();
+    return usgsData.map((feature): Earthquake => ({
+      id: feature.id,
+      date: new Date(feature.properties.time),
+      magnitude: feature.properties.mag,
+      depth: feature.geometry.coordinates[2],
+      latitude: feature.geometry.coordinates[1],
+      longitude: feature.geometry.coordinates[0],
+      location: feature.properties.place,
+      source: 'USGS',
+      province: feature.properties.place.split(' of ')[1] || '',
+      district: '',
+    }));
+  }
+
+  if (source === 'geofon') {
+    const geofonData = await getGeofonData();
+    return geofonData.map((eq): Earthquake => ({
+      id: eq.eventId,
+      date: new Date(eq.time),
+      magnitude: parseFloat(eq.magnitude),
+      depth: parseFloat(eq.depth),
+      latitude: parseFloat(eq.latitude),
+      longitude: parseFloat(eq.longitude),
+      location: eq.location,
+      source: 'GEOFON',
+      province: eq.location.split('-')[0]?.trim() || '',
+      district: eq.location.split('-')[1]?.trim() || '',
+    }));
+  }
+
+  if (source === 'emsc') {
+    const emscData = await getEMSCData();
+    return emscData.map((feature): Earthquake => ({
+      id: feature.id,
+      date: new Date(feature.properties.time),
+      magnitude: feature.properties.mag,
+      depth: Math.abs(feature.geometry.coordinates[2]),
+      latitude: feature.properties.lat,
+      longitude: feature.properties.lon,
+      location: feature.properties.flynn_region || 'Unknown Location',
+      source: 'EMSC',
+      province: feature.properties.flynn_region?.split(' ')[0] || '',
+      district: '',
+    }));
+  }
+
+  return earthquakes;
+}
 
 export async function GET(request: NextRequest) {
   try {
     const searchParams = request.nextUrl.searchParams;
     const source = searchParams.get('source') || 'all';
-    let earthquakes: Earthquake[] = [];
-
-    if (source === 'all') {
-      console.log('Fetching data from all sources...');
-      
-      let kandilliData: KandilliEarthquake[] = [];
-      let afadData: AfadEarthquake[] = [];
-      let usgsData: USGSFeature[] = [];
-      let geofonData: GeofonEarthquake[] = [];
-      let emscData: EMSCFeature[] = [];
-      
-      try {
-        kandilliData = await scrapeKandilliData();
-        console.log(`Kandilli data fetched: ${kandilliData.length} records`);
-      } catch (error) {
-        console.error('Failed to fetch Kandilli data:', error);
-      }
-      
-      try {
-        usgsData = await getUSGSData();
-        console.log(`USGS data fetched: ${usgsData.length} records`);
-      } catch (error) {
-        console.error('Failed to fetch USGS data:', error);
-      }
-      
-      try {
-        afadData = await getAfadData();
-        console.log(`AFAD data fetched: ${afadData.length} records`);
-      } catch (error) {
-        console.error('Failed to fetch AFAD data:', error);
-      }
-
-      try {
-        geofonData = await getGeofonData();
-        console.log(`GEOFON data fetched: ${geofonData.length} records`);
-      } catch (error) {
-        console.error('Failed to fetch GEOFON data:', error);
-      }
-
-      try {
-        emscData = await getEMSCData();
-        console.log(`EMSC data fetched: ${emscData.length} records`);
-      } catch (error) {
-        console.error('Failed to fetch EMSC data:', error);
-      }
-
-      const formattedKandilliData = kandilliData.map((eq): Earthquake => ({
-        id: `kandilli-${eq.date}-${eq.time}`,
-        date: new Date(`${eq.date} ${eq.time} GMT+0300`),
-        magnitude: parseFloat(eq.ml) || parseFloat(eq.mw) || parseFloat(eq.md) || 0,
-        depth: parseFloat(eq.depth),
-        latitude: parseFloat(eq.latitude),
-        longitude: parseFloat(eq.longitude),
-        location: eq.location,
-        source: 'Kandilli',
-        province: eq.location.split('-')[0]?.trim() || '',
-        district: eq.location.split('-')[1]?.trim() || '',
-        quality: eq.quality
-      }));
-
-      const formattedAfadData = afadData.map((eq): Earthquake => ({
-        id: eq.eventID,
-        date: new Date(eq.date),
-        magnitude: eq.magnitude,
-        depth: eq.depth,
-        latitude: eq.latitude,
-        longitude: eq.longitude,
-        location: eq.location,
-        source: 'AFAD',
-        province: eq.province,
-        district: eq.district,
-        neighborhood: eq.neighborhood
-      }));
-      
-      const formattedUSGSData = usgsData.map((feature): Earthquake => ({
-        id: feature.id,
-        date: new Date(feature.properties.time),
-        magnitude: feature.properties.mag,
-        depth: feature.geometry.coordinates[2], 
-        latitude: feature.geometry.coordinates[1],
-        longitude: feature.geometry.coordinates[0],
-        location: feature.properties.place,
-        source: 'USGS',
-        province: feature.properties.place.split(' of ')[1] || '',
-        district: '',
-      }));
-
-      const formattedGeofonData = geofonData.map((eq): Earthquake => ({
-        id: eq.eventId,
-        date: new Date(eq.time),
-        magnitude: parseFloat(eq.magnitude),
-        depth: parseFloat(eq.depth),
-        latitude: parseFloat(eq.latitude),
-        longitude: parseFloat(eq.longitude),
-        location: eq.location,
-        source: 'GEOFON',
-        province: eq.location.split('-')[0]?.trim() || '',
-        district: eq.location.split('-')[1]?.trim() || '',
-      }));
-
-      const formattedEMSCData = emscData.map((feature): Earthquake => ({
-        id: feature.id,
-        date: new Date(feature.properties.time),
-        magnitude: feature.properties.mag,
-        depth: Math.abs(feature.geometry.coordinates[2]), // Mutlak değer alarak negatif değerleri pozitife çeviriyorum
-        latitude: feature.properties.lat,
-        longitude: feature.properties.lon,
-        location: feature.properties.flynn_region || 'Unknown Location',
-        source: 'EMSC',
-        province: feature.properties.flynn_region?.split(' ')[0] || '',
-        district: '',
-      }));
-
-      earthquakes = [...formattedKandilliData, ...formattedAfadData, ...formattedUSGSData, ...formattedGeofonData, ...formattedEMSCData];
-      
-      earthquakes.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
-    } else if (source === 'kandilli') {
-      const kandilliData = await scrapeKandilliData();
-      earthquakes = kandilliData.map((eq): Earthquake => ({
-        id: `kandilli-${eq.date}-${eq.time}`,
-        date: new Date(`${eq.date} ${eq.time} GMT+0300`),
-        magnitude: parseFloat(eq.ml) || parseFloat(eq.mw) || parseFloat(eq.md) || 0,
-        depth: parseFloat(eq.depth),
-        latitude: parseFloat(eq.latitude),
-        longitude: parseFloat(eq.longitude),
-        location: eq.location,
-        source: 'Kandilli',
-        province: eq.location.split('-')[0]?.trim() || '',
-        district: eq.location.split('-')[1]?.trim() || '',
-        quality: eq.quality
-      }));
-    } else if (source === 'afad') {
-      const afadData = await getAfadData();
-      earthquakes = afadData.map((eq): Earthquake => ({
-        id: eq.eventID,
-        date: new Date(eq.date),
-        magnitude: eq.magnitude,
-        depth: eq.depth,
-        latitude: eq.latitude,
-        longitude: eq.longitude,
-        location: eq.location,
-        source: 'AFAD',
-        province: eq.province,
-        district: eq.district,
-        neighborhood: eq.neighborhood
-      }));
-    } else if (source === 'usgs') {
-      const usgsData = await getUSGSData();
-      earthquakes = usgsData.map((feature): Earthquake => ({
-        id: feature.id,
-        date: new Date(feature.properties.time),
-        magnitude: feature.properties.mag,
-        depth: feature.geometry.coordinates[2],
-        latitude: feature.geometry.coordinates[1],
-        longitude: feature.geometry.coordinates[0],
-        location: feature.properties.place,
-        source: 'USGS',
-        province: feature.properties.place.split(' of ')[1] || '',
-        district: '',
-      }));
-    } else if (source === 'geofon') {
-      const geofonData = await getGeofonData();
-      earthquakes = geofonData.map((eq): Earthquake => ({
-        id: eq.eventId,
-        date: new Date(eq.time),
-        magnitude: parseFloat(eq.magnitude),
-        depth: parseFloat(eq.depth),
-        latitude: parseFloat(eq.latitude),
-        longitude: parseFloat(eq.longitude),
-        location: eq.location,
-        source: 'GEOFON',
-        province: eq.location.split('-')[0]?.trim() || '',
-        district: eq.location.split('-')[1]?.trim() || '',
-      }));
-    } else if (source === 'emsc') {
-      const emscData = await getEMSCData();
-      earthquakes = emscData.map((feature): Earthquake => ({
-        id: feature.id,
-        date: new Date(feature.properties.time),
-        magnitude: feature.properties.mag,
-        depth: Math.abs(feature.geometry.coordinates[2]), // Mutlak değer alarak negatif değerleri pozitife çeviriyorum
-        latitude: feature.properties.lat, // properties.lat kullanıyoruz
-        longitude: feature.properties.lon, // properties.lon kullanıyoruz
-        location: feature.properties.flynn_region || 'Unknown Location',
-        source: 'EMSC',
-        province: feature.properties.flynn_region?.split(' ')[0] || '',
-        district: '',
-      }));
-    }
+    const earthquakes = await getEarthquakesData(source);
 
     return NextResponse.json(earthquakes);
   } catch (error) {
